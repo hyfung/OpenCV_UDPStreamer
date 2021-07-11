@@ -26,18 +26,29 @@ def captureThread():
         cv2.waitKey(100)
 
 def main():
+    # Attach a SIGINT handler to modify the global variable 'run'
     signal.signal(signal.SIGINT, sigint_handler)
+
+    # Configuration used locally, should've used argparse to take in arguments
+    bind_ip = "0.0.0.0"
+    bind_port = 9999
+
+    # Create our UDP client socket
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     
+    # Start capturing frames
     tCapture = threading.Thread(target=captureThread)
     tCapture.start()
 
     count = 0
     while run:
-        client.sendto(q.get(), ("127.0.0.1", 9999))
+        client.sendto(q.get(), (bind_ip, bind_port))
         time.sleep(0.1)
         print(f'[Send] {count}')
         count += 1
+
+    # Wait for capture thread to gracefully exit
+    tCapture.join()
 
 if __name__ == '__main__':
     main()
