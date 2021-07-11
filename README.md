@@ -1,6 +1,8 @@
 # OpenCV_UDPStreamer
 Simple UDP streaming demo with OpenCV and Python socket library
 
+![alt text](https://github.com/hyfung/OpenCV_UDPStreamer/blob/white/images/01.png "")
+
 ## Usage
 Install the dependencies
 ```
