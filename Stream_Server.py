@@ -15,6 +15,7 @@ def sigint_handler(signum, frame):
     run = False
 
 def displayThread():
+    global run
     while run:
         data = q.get()
         if data == b"\0":
@@ -22,7 +23,8 @@ def displayThread():
         tmp = np.asarray(bytearray(data), dtype='uint8')
         img = cv2.imdecode(tmp, cv2.IMREAD_COLOR)
         cv2.imshow("Receiving Feed", img)
-        cv2.waitKey(100)
+        if cv2.waitKey(100) & 0xFF == ord('q'):
+            run = False
 
 def main():
     # Attach a SIGINT handler to modify the global variable 'run'

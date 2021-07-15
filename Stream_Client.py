@@ -15,15 +15,16 @@ def sigint_handler(signum, frame):
     run = False
 
 def captureThread():
+    global run
     cap = cv2.VideoCapture(0)
-    
     while run:
         ret, img = cap.read()
         img = cv2.resize(img, (320,240))
         ret, img_encode = cv2.imencode('.jpg', img)
         q.put(img_encode.tobytes())
         cv2.imshow("Transmitting Feed", img)
-        cv2.waitKey(100)
+        if cv2.waitKey(100) & 0xFF == ord('q'):
+            run = False
 
 def main():
     # Attach a SIGINT handler to modify the global variable 'run'
