@@ -24,6 +24,7 @@ def displayThread():
         img = cv2.imdecode(tmp, cv2.IMREAD_COLOR)
         cv2.imshow("Receiving Feed", img)
         if cv2.waitKey(100) & 0xFF == ord('q'):
+            q.put(b"\0")
             run = False
 
 def main():
