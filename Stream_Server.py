@@ -17,6 +17,8 @@ def sigint_handler(signum, frame):
 def displayThread():
     while run:
         data = q.get()
+        if data == b"\0":
+            return
         tmp = np.asarray(bytearray(data), dtype='uint8')
         img = cv2.imdecode(tmp, cv2.IMREAD_COLOR)
         cv2.imshow("Receiving Feed", img)
@@ -35,6 +37,7 @@ def main():
 
     # Create our server UDP socket
     server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    server.settimeout(1)
     server.bind((bind_ip, bind_port))
     print(f"[Listening] {bind_ip}:{bind_port}")
 
@@ -44,11 +47,15 @@ def main():
 
     count = 0
     while run:
-        data, addr = server.recvfrom(65535)
-        q.put(data)
-        print(f"[Recv]{addr}: {count}")
-        count += 1
+        try:
+            data, addr = server.recvfrom(65535)
+            q.put(data)
+            print(f"[Recv]{addr}: {count}")
+            count += 1
+        except socket.timeout:
+            print(f"Received nothing...")
 
+    q.put(b"\0")
     # Wait for display thread to gracefully exit
     tDisplay.join()
 
