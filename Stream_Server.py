@@ -16,15 +16,18 @@ def sigint_handler(signum, frame):
 
 def displayThread():
     global run
+    img = np.zeros((240,320,3), dtype="uint8")
     while run:
-        data = q.get()
-        if data == b"\0":
-            return
-        tmp = np.asarray(bytearray(data), dtype='uint8')
-        img = cv2.imdecode(tmp, cv2.IMREAD_COLOR)
+        try:
+            data = q.get(timeout=1)
+            tmp = np.asarray(bytearray(data), dtype='uint8')
+            img = cv2.imdecode(tmp, cv2.IMREAD_COLOR)
+        except queue.Empty:
+            pass
+
         cv2.imshow("Receiving Feed", img)
         if cv2.waitKey(100) & 0xFF == ord('q'):
-            q.put(b"\0")
+            q.put(None)
             run = False
 
 def main():
