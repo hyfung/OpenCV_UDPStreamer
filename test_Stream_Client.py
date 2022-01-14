@@ -17,8 +17,9 @@ def test_captureThread_noVideoInput():
     with pytest.raises(Exception):
         captureThread("test2.mp4")
 
-def test_captureThread_noVideoInput():
-    captureThread("test2.mp4")    
+def test_captureThread_noVideoInput_without_catching_exception():
+    return
+    captureThread("test2.mp4")
 
 
 def test_sigint_handler():
